@@ -44,7 +44,7 @@ Na youtubu imajo vedeji o roomu okoli 200 tisoč ogledov.
 - [Preberi več](https://developer.android.com/training/data-storage/room#setup)
 - Moj primer podpira samo kotlin z `build.gradle.kts`
 - V `build.gradle.kts` od `app`
-```
+```Gradle
 dependencies {
     val room_version = "2.8.4" // My version (current latest)
     implementation("androidx.room:room-runtime:$room_version")
@@ -55,7 +55,7 @@ dependencies {
 - Potreben je tudi [ksp](https://developer.android.com/build/migrate-to-ksp#add-ksp)
 
 ## Primer Uporabe
-- Stvari, ki v tem primeru nebodo omnjene [Tuji ključi](https://medium.com/@vontonnie/connecting-room-tables-using-foreign-keys-c19450361603) in [Converters](https://developer.android.com/training/data-storage/room/referencing-data) (shranjvanje kompleknih tipov, recimo date time)
+- Stvari, ki v tem primeru nebodo omnjene [Migracije](https://developer.android.com/training/data-storage/room/migrating-db-versions) [Tuji ključi](https://medium.com/@vontonnie/connecting-room-tables-using-foreign-keys-c19450361603) in [Converters](https://developer.android.com/training/data-storage/room/referencing-data) (shranjvanje kompleknih tipov, recimo date time)
 - Recimo da pripravimo bazo z tableo Person, ki vsebuje ljudi, potrebujemo:
     - Person (class and entity)
     - PersonDao (Dao interface)
@@ -85,10 +85,101 @@ data class Person (
 )
 ```
 ### Person dao
+- Interface z anotacijo Dao
+- Upsert (Kombinacija insert in update)
+- Uporaba suspend (dobra praksa za baze, da klic baze ne zamrzne UI)
+```Kotlin
+package com.test.roomtest.data
 
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Query
+import androidx.room.Upsert
 
+@Dao
+interface PersonDao {
+    /*
+    This would work well but i prefer Upsert
+    @Insert
+    suspend fun insert(person: Person) : Long
 
+    @Update
+    suspend fun update(person: Person)
+    */
 
+    // Inserts a new person or updates an existing one depending on the primary key
+    // If id = 0 (with autoGenerate), inserts and returns new row id.
+    // If id matches existing, updates and returns -1.
+    @Upsert
+    suspend fun upsert(person: Person) : Long //Functions can also be marked as suspend
+
+    @Delete
+    suspend fun delete(person: Person)
+
+    @Query("SELECT * FROM person")
+    suspend fun getAll() : List<Person> // As mentioned before use of Flow is also supported here
+
+    @Query("SELECT * FROM person WHERE id = :id")
+    suspend fun getById(id: Int) : Person?
+
+    @Query("SELECT * FROM person WHERE name = :name")
+    suspend fun getByName(name: String) : List<Person>
+
+    @Query("DELETE FROM person WHERE id = :id")
+    suspend fun deleteById(id: Int)
+}
+
+```
+### MyDatabase
+- Anotacija Database, notri naštete tabele baze
+- Vsebuje dao, ki jih bomo želeli klicati
+```Kotlin
+package com.test.roomtest.data
+
+import androidx.room.Database
+import androidx.room.RoomDatabase
+
+@Database(entities = [Person::class], version = 1)
+abstract class MyDatabase : RoomDatabase() {
+    abstract fun personDao(): PersonDao
+}
+```
+### Primer uporabe
+- Pridobitev baze
+```Kotlin
+val db = Room.databaseBuilder(
+    applicationContext,
+    MyDatabase::class.java, "test-database"
+).build()
+```
+- Priporočilo: uporaba singelton dp. v programu (saj lahko več dostop do iste baze pripelje do težav)
+
+- Pridobimo dao
+```Kotlin
+val personDao = db.personDao()
+```
+- Zaradi uporabe suspend zdaj to rabim kljicat v drugi suspend funkciji ali pa uporabiti nekaj takšnjega kar je lifcycleScope.lunch
+- Potem pa lahk preprosto uporabljamo funkcije iz dao interface
+```Kotlin
+lifecycleScope.launch { // Needed to call suspend functions
+    personDao.upsert(Person("Ana", "Neki", 20))
+    personDao.upsert(Person("Lolek", "Boldek", 20, "test@email.com"))
+
+    personDao.getAll().forEach {
+        Log.i("ROOM_TEST", it.toString())
+    }
+
+    personDao.getByName("Lolek").forEach {
+        personDao.delete(it)
+    }
+
+    Log.i("ROOM_TEST", "After deletion of all Lolek:")
+
+    personDao.getAll().forEach {
+        Log.i("ROOM_TEST", it.toString())
+    }
+}
+```
 
 ### Testiranje baze
 - Priporočam uporabo **App Inspector** v **Android Studio**
@@ -97,7 +188,8 @@ data class Person (
 - Ima pa tudi zmožnost izvajanja sql querijev
 
 ## Možne izjeme
-- V primeru da Room ne najde migracijske poti da spremeni obstoječo bazo na napravi v trenutno verzije vrže **IllegalStateException**
+- **IllegalStateException** v primeru da Room ne najde migracijske poti da spremeni obstoječo bazo na napravi v trenutno verzije
+- **SQLiteConstraintException**
 
 ### Sources
 - https://developer.android.com/training/data-storage/room
