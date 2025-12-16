@@ -55,6 +55,47 @@ dependencies {
 - Potreben je tudi [ksp](https://developer.android.com/build/migrate-to-ksp#add-ksp)
 
 ## Primer Uporabe
+- Stvari, ki v tem primeru nebodo omnjene [Tuji ključi](https://medium.com/@vontonnie/connecting-room-tables-using-foreign-keys-c19450361603) in [Converters](https://developer.android.com/training/data-storage/room/referencing-data) (shranjvanje kompleknih tipov, recimo date time)
+- Recimo da pripravimo bazo z tableo Person, ki vsebuje ljudi, potrebujemo:
+    - Person (class and entity)
+    - PersonDao (Dao interface)
+    - MyDatabase (Room database)
+<img width="339" height="99" alt="image" src="https://github.com/user-attachments/assets/ea744493-17e1-4597-a4ed-68fb92fea3fe" />
+
+### Person
+- Pripravimo razred Person, ki ga anotiramo kot entity
+- Določimo tudi primary key, v mojem primeru torej id
+- Jaz sem tudi določil da se naj id avtomatsko generira z `autoGenerate = true`.
+```
+package com.test.roomtest.data
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "person")
+data class Person (
+    val name: String,
+    val surname: String? = null,
+    val age: Int = 18,
+    val email: String? = null,
+
+    // Moved primary key to the bottom because it has a default value
+    @PrimaryKey(autoGenerate = true) // by default false
+    var id: Int = 0
+)
+```
+### Person dao
+
+
+
+
+
+### Testiranje baze
+- Priporočam uporabo **App Inspector** v **Android Studio**
+- Lahko preprosto vidimo shemo baze:
+- Omogoča izvoz podatkov tako v sql datoteki kot tudi csv
+- Ima pa tudi zmožnost izvajanja sql querijev
+
 ## Možne izjeme
 - V primeru da Room ne najde migracijske poti da spremeni obstoječo bazo na napravi v trenutno verzije vrže **IllegalStateException**
 
