@@ -35,7 +35,7 @@ Na youtubu imajo vedeji o roomu okoli 200 tisoč ogledov.
 - Letos izdanih 9 relesov (2.7.0, 2.7.1, 2.7.3, 2.8.0, 2.8.1, 2.8.2, 2.8.2, 2.8.3, 2.8.4) in še nekaj alf in bet
 - Imajo še 244 aktivh prijavljenih [hroščov/zahtevkov za dodatke](https://issuetracker.google.com/issues?q=componentid:413107%20status:open)
 ### Dovoljenja
-- Ne potrebuje nobenih posebnih dovoljenj.
+- Ne potrebuje nobenih posebnih dovoljenj, razen če poganjamo DB operacije na glavni niti
 
 ## Setup
 - [Preberi več](https://developer.android.com/training/data-storage/room#setup)
@@ -181,14 +181,19 @@ lifecycleScope.launch { // Needed to call suspend functions
 <img width="766" height="240" alt="image" src="https://github.com/user-attachments/assets/5992b6aa-9349-4bea-bdd9-211307c35a7e" />
 
 ### Testiranje baze
-- Priporočam uporabo **App Inspector** v **Android Studio**
-- Lahko preprosto vidimo shemo baze:
-- Omogoča izvoz podatkov tako v sql datoteki kot tudi csv
-- Ima pa tudi zmožnost izvajanja sql querijev
+- Priporočam uporabo **App Inspector** bolj specifično [database inspector](https://developer.android.com/studio/inspect/database) v **Android Studio**
+    - Lahko preprosto vidimo shemo baze
+    - Omogoča izvoz podatkov tako v sql datoteki kot tudi csv
+    - Ima pa tudi zmožnost izvajanja sql querijev
 
 ## Možne izjeme
-- **IllegalStateException** v primeru da Room ne najde migracijske poti da spremeni obstoječo bazo na napravi v trenutno verzije
-- **SQLiteConstraintException**
+- **IllegalStateException** v primeru da Room ne najde migracijske poti da spremeni obstoječo bazo na napravi v trenutno verzije, ali pa recimo poganjanje na glavni niti brez dovoljenj
+- **SQLiteConstraintException** klasične SQL napake(vstavlanje z že obstoječim id, Not null napake, podvajanje ko nastavljen unique)
+- **SQLiteException** neveljani queriji
+- **IllegalArgumentException** neobstoječ primarni ključ
+- **EmptyResultSetException** najdemo nič ko dao zahteva nenullable rezultat
+- **SQLiteDatabaseCorruptException** če neveljavna datoteka baze
+- **SQLiteReadOnlyDatabaseException** pišemo v readonly bazo
 
 ### Sources
 - https://developer.android.com/training/data-storage/room
