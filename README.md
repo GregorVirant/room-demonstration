@@ -66,7 +66,7 @@ dependencies {
 - Pripravimo razred Person, ki ga anotiramo kot entity
 - Določimo tudi primary key, v mojem primeru torej id
 - Jaz sem tudi določil da se naj id avtomatsko generira z `autoGenerate = true`.
-```
+```Kotlin
 package com.test.roomtest.data
 
 import androidx.room.Entity
