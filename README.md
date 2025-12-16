@@ -34,6 +34,8 @@ Na youtubu imajo vedeji o roomu okoli 200 tisoč ogledov.
 - Zadnja sprememba: November 19, 2025, stable release 2.8.4
 - Letos izdanih 9 relesov (2.7.0, 2.7.1, 2.7.3, 2.8.0, 2.8.1, 2.8.2, 2.8.2, 2.8.3, 2.8.4) in še nekaj alf in bet
 - Imajo še 244 aktivh prijavljenih [hroščov/zahtevkov za dodatke](https://issuetracker.google.com/issues?q=componentid:413107%20status:open)
+### Dovoljenja
+- Ne potrebuje nobenih posebnih dovoljenj.
 ## Osnovna zgradba
 ... Mogoc sam ob primeru
 <img width="724" height="619" alt="image" src="https://github.com/user-attachments/assets/86178186-1338-4bce-9ac3-d4159fa89d35" />
