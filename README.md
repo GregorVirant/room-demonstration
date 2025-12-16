@@ -36,9 +36,6 @@ Na youtubu imajo vedeji o roomu okoli 200 tisoč ogledov.
 - Imajo še 244 aktivh prijavljenih [hroščov/zahtevkov za dodatke](https://issuetracker.google.com/issues?q=componentid:413107%20status:open)
 ### Dovoljenja
 - Ne potrebuje nobenih posebnih dovoljenj.
-## Osnovna zgradba
-... Mogoc sam ob primeru
-<img width="724" height="619" alt="image" src="https://github.com/user-attachments/assets/86178186-1338-4bce-9ac3-d4159fa89d35" />
 
 ## Setup
 - [Preberi več](https://developer.android.com/training/data-storage/room#setup)
@@ -55,7 +52,7 @@ dependencies {
 - Potreben je tudi [ksp](https://developer.android.com/build/migrate-to-ksp#add-ksp)
 
 ## Primer Uporabe
-- Stvari, ki v tem primeru nebodo omnjene [Migracije](https://developer.android.com/training/data-storage/room/migrating-db-versions) [Tuji ključi](https://medium.com/@vontonnie/connecting-room-tables-using-foreign-keys-c19450361603) in [Converters](https://developer.android.com/training/data-storage/room/referencing-data) (shranjvanje kompleknih tipov, recimo date time)
+- Stvari, ki v tem primeru nebodo omnjene [Migracije](https://developer.android.com/training/data-storage/room/migrating-db-versions), [Tuji ključi](https://medium.com/@vontonnie/connecting-room-tables-using-foreign-keys-c19450361603) in [Converters](https://developer.android.com/training/data-storage/room/referencing-data) (shranjvanje kompleknih tipov, recimo date time)
 - Recimo da pripravimo bazo z tableo Person, ki vsebuje ljudi, potrebujemo:
     - Person (class and entity)
     - PersonDao (Dao interface)
@@ -180,6 +177,8 @@ lifecycleScope.launch { // Needed to call suspend functions
     }
 }
 ```
+<img width="419" height="171" alt="image" src="https://github.com/user-attachments/assets/b94c37ec-e5d5-44c4-bcd6-a535581a1e50" />
+<img width="766" height="240" alt="image" src="https://github.com/user-attachments/assets/5992b6aa-9349-4bea-bdd9-211307c35a7e" />
 
 ### Testiranje baze
 - Priporočam uporabo **App Inspector** v **Android Studio**
