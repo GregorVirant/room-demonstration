@@ -38,6 +38,20 @@ Na youtubu imajo vedeji o roomu okoli 200 tisoč ogledov.
 ... Mogoc sam ob primeru
 <img width="724" height="619" alt="image" src="https://github.com/user-attachments/assets/86178186-1338-4bce-9ac3-d4159fa89d35" />
 
+## Setup
+- [Preberi več](https://developer.android.com/training/data-storage/room#setup)
+- Moj primer podpira samo kotlin z `build.gradle.kts`
+- V `build.gradle.kts` od `app`
+```
+dependencies {
+    val room_version = "2.8.4" // My version (current latest)
+    implementation("androidx.room:room-runtime:$room_version")
+    implementation("androidx.room:room-ktx:$room_version") // OPTIONAL For kotlin coroutines
+    ksp("androidx.room:room-compiler:$room_version") // Kotlin Symbol Processing (annotation processor)
+}
+```
+- Potreben je tudi [ksp](https://developer.android.com/build/migrate-to-ksp#add-ksp)
+
 ## Primer Uporabe
 ## Možne izjeme
 - V primeru da Room ne najde migracijske poti da spremeni obstoječo bazo na napravi v trenutno verzije vrže **IllegalStateException**
