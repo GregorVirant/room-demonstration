@@ -52,7 +52,7 @@ dependencies {
 - Potreben je tudi [ksp](https://developer.android.com/build/migrate-to-ksp#add-ksp)
 
 ## Primer Uporabe
-- Stvari, ki v tem primeru nebodo omnjene [Migracije](https://developer.android.com/training/data-storage/room/migrating-db-versions), [Tuji ključi](https://medium.com/@vontonnie/connecting-room-tables-using-foreign-keys-c19450361603) in [Converters](https://developer.android.com/training/data-storage/room/referencing-data) (shranjvanje kompleknih tipov, recimo date time)
+- Stvari, ki v tem primeru ne bodo ali pa bodo v manjpih količinah omnjene [Migracije](https://developer.android.com/training/data-storage/room/migrating-db-versions), [Tuji ključi](https://medium.com/@vontonnie/connecting-room-tables-using-foreign-keys-c19450361603) in [Converters](https://developer.android.com/training/data-storage/room/referencing-data) (shranjvanje kompleknih tipov, recimo date time)
 - Recimo da pripravimo bazo z tableo Person, ki vsebuje ljudi, potrebujemo:
     - Person (class and entity)
     - PersonDao (Dao interface)
@@ -180,6 +180,51 @@ lifecycleScope.launch { // Needed to call suspend functions
 <img width="419" height="171" alt="image" src="https://github.com/user-attachments/assets/b94c37ec-e5d5-44c4-bcd6-a535581a1e50" />
 <img width="766" height="240" alt="image" src="https://github.com/user-attachments/assets/5992b6aa-9349-4bea-bdd9-211307c35a7e" />
 
+### Tuji ključi
+- Tuje ključe določimo v anotacijim kot kaže naslednji primer
+- Child colums predstavlja stolpec v tej tabeli, ki hrani id druge tabele.
+```Kotlin
+@Entity(
+    tableName = "person",
+    foreignKeys = [
+        ForeignKey(
+            entity = Group::class,
+            parentColumns = ["id"],
+            childColumns = ["groupId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
+)
+data class Person (
+    val groupId: Int,
+    ...
+)
+```
+<img width="339" height="273" alt="image" src="https://github.com/user-attachments/assets/4880cdb0-1e97-4424-a27c-09bab13b3e10" />
+
+### Migracije
+- Pripravimo objekt migracije
+```Kotlin
+val MIGRATION_1_2 = object : Migration(1, 2) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("""
+            CREATE TABLE IF NOT EXISTS `group` (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                name TEXT NOT NULL
+            )
+        """.trimIndent())
+        ...
+    }
+}
+```
+- Vse objekte migracij dodamo v builder
+```Kotlin
+val db = Room.databaseBuilder(
+    applicationContext,
+    MyDatabase::class.java, "test-database"
+).addMigrations(MIGRATION_1_2).build()
+```
+
 ### Testiranje baze
 - Priporočam uporabo **App Inspector** bolj specifično [database inspector](https://developer.android.com/studio/inspect/database) v **Android Studio**
     - Lahko preprosto vidimo shemo baze
@@ -194,6 +239,7 @@ lifecycleScope.launch { // Needed to call suspend functions
 - **EmptyResultSetException** najdemo nič ko dao zahteva nenullable rezultat
 - **SQLiteDatabaseCorruptException** če neveljavna datoteka baze
 - **SQLiteReadOnlyDatabaseException** pišemo v readonly bazo
+- ...
 
 ### Sources
 - https://developer.android.com/training/data-storage/room
