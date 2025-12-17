@@ -8,6 +8,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.room.Room
+import com.test.roomtest.data.Group
+import com.test.roomtest.data.MIGRATION_1_2
 import com.test.roomtest.data.MyDatabase
 import com.test.roomtest.data.Person
 import kotlinx.coroutines.launch
@@ -28,14 +30,16 @@ class MainActivity : AppCompatActivity() {
         val db = Room.databaseBuilder(
             applicationContext,
             MyDatabase::class.java, "test-database"
-        ).build()
+        ).addMigrations(MIGRATION_1_2).build()
 
         val personDao = db.personDao()
+        val groupDao = db.groupDao()
 
 
         lifecycleScope.launch { // Needed to call suspend functions
-            personDao.upsert(Person("Ana", "Neki", 20))
-            personDao.upsert(Person("Lolek", "Boldek", 20, "test@email.com"))
+            groupDao.insert(Group("Test group"))
+            personDao.upsert(Person("Ana", "Neki", 20, groupId = 1))
+            personDao.upsert(Person("Lolek", "Boldek", 20, "test@email.com", groupId = 1))
 
             personDao.getAll().forEach {
                 Log.i("ROOM_TEST", it.toString())

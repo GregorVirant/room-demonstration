@@ -36,4 +36,7 @@ interface PersonDao {
 
     @Query("DELETE FROM person WHERE id = :id")
     suspend fun deleteById(id: Int)
+
+    @Query("SELECT * FROM person WHERE groupId = :groupId")
+    suspend fun getByGroupId(groupId: Int): List<Person>
 }
