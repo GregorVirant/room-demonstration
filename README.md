@@ -3,40 +3,43 @@
 ## Opis in ostale informacije
 - Za lokalno shranjevanje podatkov v SQLbazi
 - Najbolj pogost primer uporabe: cachiranje poemembnih podatkov, da bodo dostopni tudi ko aplikcaija nima dostopa do interneta
-
-
-Del android jetpack in androidx.
-
-Opisnik
-Mogoc tut dovoljenja
-
-Je kompatibilno tudi z kotlin multiplatform.
-Podpora LiveData
-Podpora asinhronosti z korutinami in tudi RXJava
-
-### Razlog izbure
+- Del android jetpack in androidx.
+- Je kompatibilno tudi z kotlin multiplatform.
+- Podpora LiveData
+- Podpora asinhronosti z korutinami in tudi RXJava
+### Razlog izbire
+- Varen način uporabe baze kar se tiče tipov
+- Preprosta uporaba v primerjavi z SQLite
+- Zmožnost kompleksnejših querijev s pomočjo SQL
 ### Prednosti
 - Abstrakcija SQLite z lažjo uporabo
-- Še vedno lahko uporablja celotno moč SQLite
-- Compile-time verifikacija SQL qurijev
+- Še vedno lahko uporablja skoraj celotno moč SQLite
+- Compile-time verifikacija SQL qurijev (recimo preverjanje tipov vrnjenih podatkov)
 - S pomočjo anotacij se izgnemo veliko "boilerplate" s tem tudi zmansamo možnosti napak
 - Poenostavljene [migracije](https://developer.android.com/training/data-storage/room/migrating-db-versions#test) (avtomatske in ročne)
 - Izvoz shem v JSON datotekah (Omogoča hranjenje zgodovin shem in posredno testiranje prejšnjih stanj baze)
+- Manj I/O operacij (caching and batching)
+- Preprosta uporaba [tranzakcij](https://developer.android.com/reference/androidx/room/Transaction)
 - [Developer Android](https://developer.android.com/training/data-storage/sqlite) priporoča uporabo Room kot abstrakcijski sloj za pridobivanje podatkov iz SQLite podatkovnih baz naše aplikacije.
 ### Slabosti
+- Ne podpira čisto vseh možnosti, ki jih SQLite (še vseeno lahko uporabljamo [RawQuery](https://developer.android.com/reference/androidx/room/RawQuery), ki pa sicer nima varnih tipov)
+- Za vsako spremembo sheme rabiš ustvariti migraciski objekt 
+- V določenih primerih je lahko počasneje kot sam SQLite recimo za večje količine podatkov
+- Ob napak v generirani kodi sporočila izjem pogosto težje berljiva
 ### Licenca
 Apache 2.0
 https://www.apache.org/licenses/LICENSE-2.0
 ### Število uporabnikov
-Na youtubu imajo vedeji o roomu okoli 200 tisoč ogledov.
-### Časovna in prostorska zahtevnost
+- Ni javnih podatkov
+- Na youtubu imajo vedeji o roomu okoli 200 tisoč ogledov.
+- [Stack Overflow](https://stackoverflow.com/questions/tagged/android-room) ima več kot 7000 vprašanj na teo android-room
+- Moja ocena uporablja ga zagotovo nekaj 10000 tisoč najveretneje pa nekaj 100000 razvijalcev ali še več
 ### Vzdrževanje tehnologije
 - Zadnja sprememba: November 19, 2025, stable release 2.8.4
 - Letos izdanih 9 relesov (2.7.0, 2.7.1, 2.7.3, 2.8.0, 2.8.1, 2.8.2, 2.8.2, 2.8.3, 2.8.4) in še nekaj alf in bet
 - Imajo še 244 aktivh prijavljenih [hroščov/zahtevkov za dodatke](https://issuetracker.google.com/issues?q=componentid:413107%20status:open)
 ### Dovoljenja
-- Ne potrebuje nobenih posebnih dovoljenj, razen če poganjamo DB operacije na glavni niti
-
+- Ne potrebuje nobenih posebnih dovoljenj
 ## Setup
 - [Preberi več](https://developer.android.com/training/data-storage/room#setup)
 - Moj primer podpira samo kotlin z `build.gradle.kts`
@@ -85,6 +88,7 @@ data class Person (
 - Interface z anotacijo Dao
 - Upsert (Kombinacija insert in update)
 - Uporaba suspend (dobra praksa za baze, da klic baze ne zamrzne UI)
+- Če ne želimo uporabiti suspend je potrebno v database builder dodati klic allowMainThreadQueries(), ampak to ni priporočeno
 ```Kotlin
 package com.test.roomtest.data
 
@@ -208,6 +212,7 @@ data class Person (
 ```Kotlin
 val MIGRATION_1_2 = object : Migration(1, 2) {
     override fun migrate(db: SupportSQLiteDatabase) {
+        // Used straight up sql because a bit more complex with all the chnges
         db.execSQL("""
             CREATE TABLE IF NOT EXISTS `group` (
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -233,6 +238,7 @@ val db = Room.databaseBuilder(
     - Ima pa tudi zmožnost izvajanja sql querijev
 
 ## Možne izjeme
+- Izjeme se tudi pogosto spreminjajo recimo v štirih zaporednih verzijah je prišlo do sprememb pri izjemah  2.7.0-beta01, 2.7.0-rc03, 2.7.1, 2.7.2
 - **IllegalStateException** v primeru da Room ne najde migracijske poti da spremeni obstoječo bazo na napravi v trenutno verzije, ali pa recimo poganjanje na glavni niti brez dovoljenj
 - **SQLiteConstraintException** klasične SQL napake(vstavlanje z že obstoječim id, Not null napake, podvajanje ko nastavljen unique)
 - **SQLiteException** neveljani queriji
