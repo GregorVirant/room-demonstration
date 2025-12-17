@@ -2,20 +2,20 @@
 [Room](https://developer.android.com/training/data-storage/room)
 ## Opis in ostale informacije
 - Za lokalno shranjevanje podatkov v SQLbazi
-- Najbolj pogost primer uporabe: cachiranje poemembnih podatkov, da bodo dostopni tudi ko aplikcaija nima dostopa do interneta
+- Najbolj pogost primer uporabe: cachiranje poemembnih podatkov, da bodo dostopni tudi ko aplikcaija nima dostopa do interneta ali pa kakšne lokalne aplikacije
 - Del android jetpack in androidx.
-- Je kompatibilno tudi z kotlin multiplatform.
-- Podpora LiveData
-- Podpora asinhronosti z korutinami in tudi RXJava
 ### Razlog izbire
 - Varen način uporabe baze kar se tiče tipov
-- Preprosta uporaba v primerjavi z SQLite
 - Zmožnost kompleksnejših querijev s pomočjo SQL
+- Osebno mi je ta del aplikcaij (baze) ponavadi najbolj mučen in sem videl da mi to lahko dobro poenostavi
 ### Prednosti
 - Abstrakcija SQLite z lažjo uporabo
 - Še vedno lahko uporablja skoraj celotno moč SQLite
 - Compile-time verifikacija SQL qurijev (recimo preverjanje tipov vrnjenih podatkov)
 - S pomočjo anotacij se izgnemo veliko "boilerplate" s tem tudi zmansamo možnosti napak
+- Podpora LiveData
+- Podpora asinhronosti s kotlin korutinami in tudi RXJava
+- Je kompatibilno tudi z kotlin multiplatform.
 - Poenostavljene [migracije](https://developer.android.com/training/data-storage/room/migrating-db-versions#test) (avtomatske in ročne)
 - Izvoz shem v JSON datotekah (Omogoča hranjenje zgodovin shem in posredno testiranje prejšnjih stanj baze)
 - Manj I/O operacij (caching and batching)
