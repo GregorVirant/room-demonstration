@@ -181,6 +181,7 @@ lifecycleScope.launch { // Needed to call suspend functions
 <img width="766" height="240" alt="image" src="https://github.com/user-attachments/assets/5992b6aa-9349-4bea-bdd9-211307c35a7e" />
 
 ### Tuji ključi
+- Kasneje sem dodal tudi skupine, da se pa ludje lahko povežejo v skupine rabijo imeti tuji kluč, ki nam pove v kateri skupini je posameznik
 - Tuje ključe določimo v anotacijim kot kaže naslednji primer
 - Child colums predstavlja stolpec v tej tabeli, ki hrani id druge tabele.
 ```Kotlin
