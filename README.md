@@ -212,7 +212,7 @@ data class Person (
 ```Kotlin
 val MIGRATION_1_2 = object : Migration(1, 2) {
     override fun migrate(db: SupportSQLiteDatabase) {
-        // Used straight up sql because a bit more complex with all the chnges
+        // Used straight up sql which might be bad for trype safety, but still used it because the only purpose is just testing migrations
         db.execSQL("""
             CREATE TABLE IF NOT EXISTS `group` (
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
